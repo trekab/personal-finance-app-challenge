@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= content_for(:title) || "Personal Finance App Challenge" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,8 +23,25 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <body class="bg-gray-50 h-lvh p-4">
   <%= render "shared/toast" %>
-    <%= yield %>
+  <main class="h-lvh flex flex-col lg:flex-row items-center justify-center lg:justify-start">
+    <!-- Banner -->
+    <div class="block lg:hidden bg-black text-center text-white p-4 w-full z-50 fixed top-0 left-0">
+      <span>Finance</span>
+    </div>
+
+    <!-- Left Side - Illustration (Hidden on mobile) -->
+    <div class="hidden lg:flex lg:w-1/2 lg:left-0 max-h-[calc(100lvh-2rem)]">
+      <%= image_tag("auth/sidebar.svg", alt: "Logo", height: 'calc(100lvh-2rem)', fetchpriority: "high") %>
+    </div>
+
+    <!-- Right Side -->
+    <div class="card w-96 bg-base-100 shadow-sm md:min-w-[35rem]">
+      <div class="card-body">
+        <%= yield %>
+      </div>
+    </div>
+  </main>
   </body>
 </html>

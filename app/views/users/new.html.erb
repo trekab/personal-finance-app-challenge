@@ -1,0 +1,73 @@
+<h2 class="text-slate-900 dark:text-slate-300 text-3xl font-semibold">Sign up</h2>
+<%= form_with url: users_url, scope: 'user', class: "contents" do |form| %>
+  <div class="mt-5">
+    <%= form.label :name, "Name", class: "mb-2" %>
+    <div class="relative flex items-center">
+      <%= form.text_field :name, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your full names", value: params[:name], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-0 w-full pr-10" %> <%# Added pr-10 for padding %>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <%= form.label :email_address, "Email", class: "mb-2" %>
+    <div class="relative flex items-center">
+      <%= form.email_field :email_address, required: true, autocomplete: "email_address", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-0 w-full pr-10" %> <%# Added pr-10 for padding %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail absolute right-4 w-4 h-4"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <%# Label for Password %>
+    <%= form.label :password, "Create Password", class: "mb-2" %>
+    <div class="relative flex items-center">
+      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-0 w-full pr-10", id: "password-field" %> <%# Added pr-10 for padding %>
+      <div class="absolute right-4 cursor-pointer" id="toggle-password">
+        <%# Eye Open Icon %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye w-4 h-4" id="eye-open">
+          <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+        <%# Eye Closed Icon %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-closed w-4 h-4 hidden" id="eye-closed">
+          <path d="m15 18-.722-3.25"/>
+          <path d="M2 8a10.645 10.645 0 0 0 20 0"/>
+          <path d="m20 15-1.726-2.05"/>
+          <path d="m4 15 1.726-2.05"/>
+          <path d="m9 18 .722-3.25"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div  class="flex text-zinc-400 text-sm justify-end">
+    Password must be atleast 8 characters
+  </div>
+
+  <div class="inline my-5">
+    <%= form.submit "Create Account", class: "w-full btn btn-primary" %>
+  </div>
+
+  <div class="text-center items-center justify-center">
+    <div class="text-sm">
+      <span> Already have an account?</span>
+      <%= link_to "Login", new_session_path, class: "btn btn-link !px-0" %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+    const passwordField = document.getElementById('password-field');
+    // Target the container div holding the icons
+    const togglePasswordButton = document.getElementById('toggle-password');
+    const eyeOpenIcon = document.getElementById('eye-open');
+    const eyeClosedIcon = document.getElementById('eye-closed');
+
+    togglePasswordButton.addEventListener('click', function () {
+        // Toggle the type attribute
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+
+        // Toggle the eye icons visibility
+        eyeOpenIcon.classList.toggle('hidden');
+        eyeClosedIcon.classList.toggle('hidden');
+    });
+</script>
