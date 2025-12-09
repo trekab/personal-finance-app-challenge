@@ -60,7 +60,7 @@ group :development, :test do
 
   # Factory Bot for generating test data [https://github.com/thoughtbot/factory_bot_rails]
   gem "factory_bot_rails"
-  
+
   # Shoulda matchers for RSpec [https://github.com/thoughtbot/shoulda-matchers]
   gem "shoulda-matchers", "~> 6.0"
 end

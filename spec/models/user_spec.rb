@@ -74,8 +74,6 @@ RSpec.describe User, type: :model do
                            }
                          ])
       }.to raise_error(ActiveRecord::RecordNotUnique)
-
     end
   end
 end
-
