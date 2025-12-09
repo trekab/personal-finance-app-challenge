@@ -66,3 +66,6 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# Simple Form [https://github.com/heartcombo/simple_form]
+gem "simple_form"
