@@ -1,4 +1,4 @@
-# Take‑Home: Personal Finance App (2 weeks)
+# Take‑Home: Personal Finance App (1 week)
 
 **Goal:** Implement a usable MVP that meets the brief and ships to a live demo.
 
