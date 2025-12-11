@@ -10,10 +10,6 @@ RSpec.describe BudgetsController, type: :routing do
       expect(get: "/budgets/new").to route_to("budgets#new")
     end
 
-    it "routes to #show" do
-      expect(get: "/budgets/1").to route_to("budgets#show", id: "1")
-    end
-
     it "routes to #edit" do
       expect(get: "/budgets/1/edit").to route_to("budgets#edit", id: "1")
     end

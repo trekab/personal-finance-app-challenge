@@ -1,0 +1,41 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Pots</h1>
+    <%= link_to new_pot_path, class: "btn btn-primary", data: { turbo_frame: "modal" } do %>
+      + Add New Budget
+    <% end %>
+  </div>
+
+  <!-- Main Content -->
+  <div class="">
+    <% if @pots.any? %>
+      <!-- Desktop/Tablet Grid (2 columns) -->
+      <div class="hidden md:grid md:grid-cols-2 gap-4 lg:gap-6">
+        <% @pots.each do |pot| %>
+          <%= render partial: 'pot_card', locals: { pot: pot } %>
+        <% end %>
+      </div>
+
+      <!-- Mobile List (1 column) -->
+      <div class="md:hidden space-y-4">
+        <% @pots.each do |pot| %>
+          <%= render partial: 'pot_card', locals: { pot: pot } %>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No pots yet</h3>
+        <p class="text-gray-600 mb-6">Create your first pot to start saving!</p>
+        <%= link_to new_pot_path, class: "inline-flex px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition" do %>
+          + Add New Pot
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

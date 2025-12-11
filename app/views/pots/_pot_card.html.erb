@@ -1,0 +1,63 @@
+<%
+  # Calculate saved amount (you'll need to implement this logic based on your transactions)
+  # For now, using a placeholder - adjust based on your actual implementation
+  percentage = pot.target > 0 ? ((pot.total_saved / pot.target) * 100).round(2) : 0
+  percentage = [percentage, 100].min # Cap at 100%
+
+%>
+
+<div class="bg-white rounded-lg p-4 md:p-5 border border-gray-200 hover:border-gray-300 transition">
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <span class="<%= theme_bg_class(pot.theme) %> w-3 h-3 rounded-full"></span>
+      <h3 class="font-semibold text-gray-900 text-sm md:text-base"><%= pot.pot_name %></h3>
+    </div>
+    <div class="dropdown dropdown-bottom dropdown-end">
+      <div tabindex="0" role="button" class="text-gray-400 hover:text-gray-600">
+        <svg width="14" height="4" viewBox="0 0 14 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.5 1.75C8.5 2.09612 8.39736 2.43446 8.20507 2.72225C8.01278 3.01003 7.73947 3.23434 7.4197 3.36679C7.09993 3.49924 6.74806 3.5339 6.40859 3.46637C6.06913 3.39885 5.75731 3.23218 5.51256 2.98744C5.26782 2.7427 5.10115 2.43087 5.03363 2.09141C4.9661 1.75194 5.00076 1.40007 5.13321 1.0803C5.26567 0.760533 5.48997 0.487221 5.77775 0.294928C6.06554 0.102636 6.40388 0 6.75 0C7.21413 0 7.65925 0.184375 7.98744 0.512563C8.31563 0.840752 8.5 1.28587 8.5 1.75ZM1.75 0C1.40388 0 1.06554 0.102636 0.777753 0.294928C0.489967 0.487221 0.265665 0.760533 0.133212 1.0803C0.000758246 1.40007 -0.0338976 1.75194 0.0336265 2.09141C0.101151 2.43087 0.267822 2.7427 0.512564 2.98744C0.757306 3.23218 1.06913 3.39885 1.40859 3.46637C1.74806 3.5339 2.09993 3.49924 2.4197 3.36679C2.73947 3.23434 3.01278 3.01003 3.20507 2.72225C3.39737 2.43446 3.5 2.09612 3.5 1.75C3.5 1.28587 3.31563 0.840752 2.98744 0.512563C2.65925 0.184375 2.21413 0 1.75 0ZM11.75 0C11.4039 0 11.0655 0.102636 10.7778 0.294928C10.49 0.487221 10.2657 0.760533 10.1332 1.0803C10.0008 1.40007 9.9661 1.75194 10.0336 2.09141C10.1012 2.43087 10.2678 2.7427 10.5126 2.98744C10.7573 3.23218 11.0691 3.39885 11.4086 3.46637C11.7481 3.5339 12.0999 3.49924 12.4197 3.36679C12.7395 3.23434 13.0128 3.01003 13.2051 2.72225C13.3974 2.43446 13.5 2.09612 13.5 1.75C13.5 1.52019 13.4547 1.29262 13.3668 1.0803C13.2788 0.867984 13.1499 0.675066 12.9874 0.512563C12.8249 0.350061 12.632 0.221156 12.4197 0.133211C12.2074 0.0452649 11.9798 0 11.75 0Z" fill="#B3B3B3"/>
+        </svg>
+      </div>
+      <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-38 p-2 shadow-sm">
+        <li class="border-b border-gray-200">
+          <%= link_to edit_pot_path(pot), data: { turbo_frame: "modal" }, class: "border-bottom" do %>
+            Edit Pot
+          <% end %>
+        </li>
+        <li>
+          <%= link_to initiate_delete_pot_path(pot), data: { turbo_frame: "modal" }, class: "text-red-400" do %>
+            Delete Pot
+          <% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Amount Display -->
+  <div class="flex justify-between items-center mb-4 mt-8">
+    <p class="text-sm text-gray-500">Total Saved</p>
+    <p class="text-2xl md:text-3xl font-bold text-gray-900">$<%= number_with_precision(pot.total_saved, precision: 2) %></p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+      <div class="<%= theme_bg_class(pot.theme) %> h-full rounded-full transition-all duration-300" style="width: <%= percentage %>%"></div>
+    </div>
+    <div class="flex items-center justify-between mt-2">
+      <span class="text-xs text-gray-600"><%= number_with_precision(percentage, precision: 2) %>%</span>
+      <span class="text-xs text-gray-500">Target of $<%= number_with_precision(pot.target, precision: 2) %></span>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex gap-2 pt-3">
+    <%= link_to '#', class: "btn bg-beige text-black flex-1" do %>
+      + Add Money
+    <% end %>
+    <%= link_to '#', class: "flex-1 btn bg-beige" do %>
+      Withdraw
+    <% end %>
+  </div>
+</div>

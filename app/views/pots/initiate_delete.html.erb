@@ -1,0 +1,15 @@
+<% content_for :title, "Delete pot" %>
+
+<%= turbo_frame_tag "modal" do %>
+  <%= render partial: "shared/modal_header", locals: { title: "Delete '#{@pot.pot_name.capitalize}'",
+                                                       description: "Are you sure you want to delete this pot? This action cannot be reversed, and all the data inside it will be removed forever." } %>
+
+  <%= link_to pot_path(@pot), data: { turbo_method: :delete,
+                                            turbo_frame: "_top" }, class: "btn btn-error w-full mb-3" do %>
+    Yes, Confirm Deletion
+  <% end %>
+
+  <%= link_to pots_path, data: { turbo_frame: "_top" }, class: "btn btn-ghost w-full mb-3" do %>
+    No, Go Back
+  <% end %>
+<% end %>

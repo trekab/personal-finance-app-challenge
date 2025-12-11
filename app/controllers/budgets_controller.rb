@@ -38,7 +38,7 @@ class BudgetsController < ApplicationController
   def update
     respond_to do |format|
       if @budget.user != current_user
-        format.html { render :edit, status: :forbidden }
+        format.html { redirect_to budgets_path, status: :forbidden }
         format.json { render json: @budget.errors, status: :forbidden }
       elsif @budget.update(budget_params)
         format.html { redirect_to budgets_path, notice: "Budget was successfully updated.", status: :see_other }

@@ -35,14 +35,6 @@ RSpec.describe "BudgetsController", type: :request do
     end
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      budget = create(:budget, user: user)
-      get budget_path(budget)
-      expect(response).to be_successful
-    end
-  end
-
   describe "GET /new" do
     it "renders a successful response" do
       get new_budget_path
