@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= content_for(:title) || "Personal Finance App Challenge" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,8 +23,19 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <body class="bg-beige min-h-lvh">
     <%= render "shared/toast" %>
     <%= render 'layouts/sidebar' %>
+
+    <!-- Modal frame -->
+    <dialog class="modal modal-bottom sm:modal-middle"
+            tabindex="-1"
+            data-controller="modal"
+            data-action="turbo:frame-load->modal#open turbo:submit-end->modal#close"
+    >
+      <div class="modal-box ">
+        <%= turbo_frame_tag "modal" %>
+      </div>
+    </dialog>
   </body>
 </html>

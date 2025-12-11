@@ -7,5 +7,11 @@ import { application } from "./application"
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)
+
+import ThemeSelectController from "./theme_select_controller"
+application.register("theme-select", ThemeSelectController)
+
 import ToastController from "./toast_controller"
 application.register("toast", ToastController)

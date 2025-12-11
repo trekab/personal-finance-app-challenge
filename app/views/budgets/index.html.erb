@@ -1,0 +1,242 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Budgets</h1>
+    <%= link_to new_budget_path, data: { turbo_frame: "modal" },
+                class: "btn btn-primary" do %>
+      + Add New Budget
+    <% end %>
+  </div>
+
+  <% if @budgets.any? %>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-y-6 lg:gap-6 mb-8">
+      <div class="col-span-2 ">
+        <div class="bg-white rounded-xl shadow-sm p-6 grid sm:flex lg:grid">
+          <!-- Donut Chart -->
+          <div class="flex justify-center items-center" style="height: 250px;">
+            <div class="relative">
+              <svg width="260" height="260" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Donut chart">
+                <%
+                  total_budget = @budgets.sum(&:maximum_spend).to_f
+                  current_angle = -90.0
+                  outer_r = 70.0
+                  inner_r = 45.0
+                  fmt = ->(v) { sprintf("%.4f", v) }
+
+                  only_one = @budgets.size == 1
+                %>
+
+                <% if only_one %>
+                  <% budget = @budgets.first %>
+                  <% # Draw a full ring using stroke so a full 360deg donut always renders %>
+                  <% ring_center_r = (outer_r + inner_r) / 2.0
+                     stroke_w = outer_r - inner_r
+                  %>
+
+                  <!-- full single-color ring (use class for color) -->
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="<%= fmt.call(ring_center_r) %>"
+                    fill="none"
+                    stroke-width="<%= fmt.call(stroke_w) %>"
+                    class="<%= theme_fill_class(budget.theme) %>"
+                    stroke-linecap="butt"
+                    />
+                <% else %>
+                  <% # Multiple slices: keep original path logic %>
+                  <% @budgets.each do |budget|
+                    next if budget.maximum_spend.to_f <= 0
+
+                    percentage = (budget.maximum_spend.to_f / total_budget) * 100.0
+                    angle = (percentage / 100.0) * 360.0
+
+                    start_x = 100 + outer_r * Math.cos(current_angle * Math::PI / 180.0)
+                    start_y = 100 + outer_r * Math.sin(current_angle * Math::PI / 180.0)
+
+                    end_angle = current_angle + angle
+                    end_x = 100 + outer_r * Math.cos(end_angle * Math::PI / 180.0)
+                    end_y = 100 + outer_r * Math.sin(end_angle * Math::PI / 180.0)
+
+                    large_arc = angle >= 180.0 ? 1 : 0
+
+                    inner_start_x = 100 + inner_r * Math.cos(current_angle * Math::PI / 180.0)
+                    inner_start_y = 100 + inner_r * Math.sin(current_angle * Math::PI / 180.0)
+                    inner_end_x = 100 + inner_r * Math.cos(end_angle * Math::PI / 180.0)
+                    inner_end_y = 100 + inner_r * Math.sin(end_angle * Math::PI / 180.0)
+
+                    path =
+                      "M #{fmt.call(start_x)} #{fmt.call(start_y)} " \
+                        "A #{fmt.call(outer_r)} #{fmt.call(outer_r)} 0 #{large_arc} 1 #{fmt.call(end_x)} #{fmt.call(end_y)} " \
+                        "L #{fmt.call(inner_end_x)} #{fmt.call(inner_end_y)} " \
+                        "A #{fmt.call(inner_r)} #{fmt.call(inner_r)} 0 #{large_arc} 0 #{fmt.call(inner_start_x)} #{fmt.call(inner_start_y)} Z"
+
+                    current_angle = end_angle
+                  %>
+                    <path d="<%= path %>" class="<%= theme_fill_class(budget.theme) %>" />
+                  <% end %>
+                <% end %>
+
+                <%# --- Semi-transparent inner ring (overlay) --- %>
+                <% ring_r = (inner_r + outer_r) / 3.0   # midpoint between outer and inner radii
+                   ring_stroke = 28  # slightly thinner than full thickness
+                %>
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="<%= fmt.call(ring_r) %>"
+                  fill="transparent"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="<%= fmt.call(ring_stroke) %>"
+                  style="mix-blend-mode: normal"
+                  />
+
+                <%# --- White center to hollow out donut --- %>
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="<%= fmt.call(inner_r) %>"
+                  fill="white"
+                  />
+              </svg>
+
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="text-lg font-bold text-gray-900">$<%= number_with_precision(total_budget, precision: 0) %></div>
+                <div class="text-sm text-gray-500">of <%= @budgets.count %> budgets</div>
+              </div>
+            </div>
+          </div>
+          <!-- Spending Summary -->
+          <div class="lg:col-span-2  flex-1">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Spending Summary</h2>
+            <div class="space-y-3">
+              <% @budgets.each do |budget| %>
+                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-0.5 h-7 p-0.5 rounded <%= theme_bg_class(budget.theme) %>"></div>
+                    <span class="text-sm text-gray-700"><%= budget.category %></span>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
+                    <span class="text-xs text-gray-400">of $<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-span-3">
+        <div class="space-y-6">
+          <% @budgets.each do |budget| %>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+              <!-- Budget Header -->
+              <div class="p-6 border-l-4 <%= theme_border_class(budget.theme) %>">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-3 h-3 rounded-full <%= theme_bg_class(budget.theme) %>"></div>
+                    <h3 class="text-lg font-semibold text-gray-900"><%= budget.category %></h3>
+                  </div>
+                  <div class="dropdown dropdown-bottom dropdown-end">
+                    <div tabindex="0" role="button" class="text-gray-400 hover:text-gray-600">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </div>
+                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-38 p-2 shadow-sm">
+                      <li>
+                        <%= link_to edit_budget_path(budget), data: { turbo_frame: "modal" }, class: "border-bottom" do %>
+                          Edit Budget
+                        <% end %>
+                      </li>
+                      <div class="divider m-0 !h-0.5"></div>
+                      <li>
+                        <%= link_to initiate_delete_budget_path(budget), data: { turbo_frame: "modal" }, class: "text-red-400" do %>
+                          Delete Budget
+                        <% end %>
+                      </li>
+                    </ul>
+                  </div>
+
+                </div>
+
+                <div class="text-sm text-gray-600 mb-2">Maximum of $<%= number_with_precision(budget.maximum_spend, precision: 2) %></div>
+
+                <!-- Progress Bar -->
+                <% spent_percentage = rand(40..90) %>
+                <% spent_amount = budget.maximum_spend * (spent_percentage / 100.0) %>
+                <% remaining_amount = budget.maximum_spend - spent_amount %>
+
+                <div class="w-full bg-gray-100 rounded h-10 p-1 mb-4 relative overflow-hidden">
+                  <div class="<%= theme_bg_class(budget.theme) %> h-8 rounded" style="width: <%= spent_percentage %>%;"></div>
+                </div>
+
+                <!-- Spent and Remaining Amounts -->
+                <div class="flex justify-between items-center mb-4">
+                  <div class="flex flex-1">
+                    <div class="w-0.5 p-0.5 rounded mr-5 <%= theme_bg_class(budget.theme) %>"></div>
+                    <div>
+                      <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-xs text-gray-600">Spent</span>
+                      </div>
+                      <div class="text-sm font-semibold text-gray-900">$<%= number_with_precision(spent_amount, precision: 2) %></div>
+                    </div>
+                  </div>
+                  <div class="flex flex-1">
+                    <div class="w-0.5 p-0.5 rounded mr-5 bg-beige"></div>
+                    <div>
+                      <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-xs text-gray-600">Remaining</span>
+                      </div>
+                      <div class="text-sm font-semibold text-gray-900">$<%= number_with_precision(remaining_amount, precision: 2) %></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-beige p-8 rounded-2xl">
+                  <!-- Latest Spending -->
+                  <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+                    <span class="font-medium">Latest Spending</span>
+                    <%= link_to root_path, class: "text-gray-400 hover:text-gray-600 flex items-center" do %>
+                      See All
+                      <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    <% end %>
+                  </div>
+
+                  <!-- Transactions -->
+                  <div class="space-y-3">
+                    <% 3.times do |i| %>
+                      <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                            <span class="text-xs font-semibold text-gray-600"><%= ['ST', 'JD', 'AM'][i] %></span>
+                          </div>
+                          <div>
+                            <div class="text-sm font-medium text-gray-900"><%= ['Store Name', 'John Doe', 'Another Merchant'][i] %></div>
+                            <div class="text-xs text-gray-500"><%= (Date.today - rand(1..10)).strftime('%d %b %Y') %></div>
+                          </div>
+                        </div>
+                        <div class="text-sm font-semibold text-gray-900">$<%= sprintf('%.2f', rand(10.0..100.0)) %></div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-12 bg-white rounded-xl shadow-sm">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-gray-500 text-lg mb-4">No budgets yet. Create your first budget to get started!</p>
+      <%= link_to new_budget_path, data: { turbo_frame: "modal" }, class: "inline-block bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition font-medium" do %>
+        + Add New Budget
+      <% end %>
+    </div>
+  <% end %>
+</div>

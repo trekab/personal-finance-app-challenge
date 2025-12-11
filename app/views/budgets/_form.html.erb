@@ -1,0 +1,75 @@
+<%= simple_form_for(@budget, data: { turbo_frame: "_top" }) do |f| %>
+<%= f.error_notification %>
+<%= f.error_notification message: f.object.errors[:base] if f.object.errors[:base].present? %>
+
+<div>
+  <%= f.input :category,
+              collection: Budget::CATEGORIES,
+              prompt: nil %>
+  <div class="relative">
+    <%= f.input :maximum_spend,
+                input_html: {
+                  step: 0.01,
+                  placeholder: "0.00",
+                  class: "pl-8"
+                },
+                wrapper_html: { class: "relative" } %>
+
+    <span class="absolute left-3 top-8 text-gray-500 pointer-events-none z-10">$</span>
+  </div>
+
+  <div data-controller="theme-select" class="relative mb-4">
+    <%= f.hidden_field :theme, data: { "theme-select-target": "input" } %>
+
+    <%= f.label :theme, class: "block mb-2" %>
+    <!-- Trigger button -->
+    <button type="button"
+            data-action="click->theme-select#toggle"
+            data-theme-select-target="button"
+            class="input w-full">
+    <span class="flex items-center gap-2">
+      <span data-theme-select-target="dot"
+            class="h-4 w-4 rounded-full"
+            style="background-color:<%= Budget::COLOR_MAP[@budget.theme] if @budget.theme.present? %>">
+      </span>
+      <span data-theme-select-target="label">
+        <%= @budget.theme || "Select theme" %>
+      </span>
+    </span>
+      <svg class="w-5 h-5 text-gray-500"><use href="#icon-chevron-down"></use></svg>
+    </button>
+
+    <!-- Dropdown -->
+    <div data-theme-select-target="menu"
+         class="absolute mt-2 w-full bg-white shadow-xl rounded-xl hidden">
+
+      <% Budget::THEMES.each do |theme| %>
+        <% used = @budget.theme_used?(theme, current_user.id) %>
+
+        <button type="button"
+                class="w-full flex items-center justify-between px-4 py-3 <%= used ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer' %>"
+                <% unless used %>
+                data-action="click->theme-select#select"
+                <% end %>
+                data-theme-select-value="<%= theme %>">
+
+            <span class="flex items-center gap-3">
+              <span class="h-4 w-4 rounded-full"
+                    style="background-color: <%= Budget::COLOR_MAP[theme] %>"></span>
+              <%= theme %>
+            </span>
+
+          <% if used %>
+            <span class="text-sm text-gray-400">Already used</span>
+          <% end %>
+        </button>
+
+    <% end %>
+    </div>
+  </div>
+</div>
+
+<div>
+  <%= f.button :submit, class: "w-full" %>
+</div>
+<% end %>

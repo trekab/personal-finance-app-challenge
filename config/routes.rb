@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :budgets, except: :show do
+    member do
+      get :initiate_delete
+    end
+  end
   resources :users, only: [ :new, :create ]
   resource :session
   resources :passwords, param: :token
