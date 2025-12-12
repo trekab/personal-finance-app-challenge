@@ -57,8 +57,8 @@ class TransactionsController < ApplicationController
         format.html { redirect_back fallback_location: transactions_path, notice: "Transaction was successfully created." }
         format.json { render :index, status: :created, location: @transaction }
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @transaction.errors, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
+        format.json { render json: @transaction.errors, status: :unprocessable_content }
       end
     end
   end

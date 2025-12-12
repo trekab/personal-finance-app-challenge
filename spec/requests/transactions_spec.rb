@@ -161,12 +161,12 @@ RSpec.describe "Transactions", type: :request do
 
       it "renders new with 422" do
         post transactions_path, params: invalid_params
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "returns JSON errors" do
         post transactions_path, params: invalid_params, headers: { "Accept" => "application/json" }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)).to be_present
       end
     end
