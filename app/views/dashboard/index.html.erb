@@ -46,18 +46,18 @@
 
             <div class="flex-grow">
               <p class="text-sm text-gray-500 mb-2">Total Saved</p>
-              <p class="text-2xl font-bold text-gray-900">$<%= number_with_precision(current_user.total_saved, precision: 2) %></p>
+              <p class="text-2xl font-bold text-gray-900"><%= number_to_currency(current_user.total_saved, precision: 2) %></p>
             </div>
           </div>
 
           <div class="flex-1 grid grid-cols-2 gap-2">
-            <% current_user.pots.each do |pot| %>
+            <% current_user.pots.limit(4).each do |pot| %>
               <div class="py-2">
                 <div class="flex space-x-3">
                   <div class="w-0.5 p-0.5 rounded <%= theme_bg_class(pot.theme) %>"></div>
                   <div class="flex flex-col">
                     <span class="text-sm text-gray-700"><%= pot.pot_name %></span>
-                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(pot.target, precision: 2) %></span>
+                    <span class="text-sm font-semibold text-gray-900"><%= number_to_currency(pot.target, precision: 2) %></span>
                   </div>
                 </div>
               </div>
@@ -214,21 +214,21 @@
               </svg>
 
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="text-lg font-bold text-gray-900">$<%= number_with_precision(total_budget, precision: 0) %></div>
+                <div class="text-lg font-bold text-gray-900"><%= number_to_currency(total_budget, precision: 0) %></div>
                 <div class="text-sm text-gray-500">of <%= current_user.budgets.count %> budgets</div>
               </div>
             </div>
           </div>
 
           <!-- Spending Summary -->
-          <div class="grid grid-cols-2 gap-4 md:block">
+          <div class="grid grid-cols-2 gap-4 md:flex md:flex-col md:justify-center">
             <% current_user.budgets.limit(4).each do |budget| %>
               <div class="col-span-1 py-2">
                 <div class="flex space-x-3">
                   <div class="w-0.5 p-0.5 rounded <%= theme_bg_class(budget.theme) %>"></div>
                   <div class="flex flex-col">
                     <span class="text-sm text-gray-700"><%= budget.category %></span>
-                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
+                    <span class="text-sm font-semibold text-gray-900"><%= number_to_currency(budget.maximum_spend, precision: 2) %></span>
                   </div>
                 </div>
               </div>
@@ -251,7 +251,7 @@
               <div class="w-1 h-10 bg-green-500 rounded-full mr-3"></div>
               <span class="text-gray-900 font-medium">Paid Bills</span>
             </div>
-            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.paid_bills, precision: 2) %></span>
+            <span class="font-semibold text-gray-900"><%= number_to_currency(current_user.paid_bills, precision: 2) %></span>
           </div>
 
           <div class="flex items-center justify-between py-3 border-b border-gray-100">
@@ -259,7 +259,7 @@
               <div class="w-1 h-10 bg-yellow-500 rounded-full mr-3"></div>
               <span class="text-gray-900 font-medium">Total Upcoming</span>
             </div>
-            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.upcoming_bills, precision: 2) %></span>
+            <span class="font-semibold text-gray-900"><%= number_to_currency(current_user.upcoming_bills, precision: 2) %></span>
           </div>
 
           <div class="flex items-center justify-between py-3">
@@ -267,7 +267,7 @@
               <div class="w-1 h-10 bg-blue-400 rounded-full mr-3"></div>
               <span class="text-gray-900 font-medium">Due Soon</span>
             </div>
-            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.overdue_bills, precision: 2) %></span>
+            <span class="font-semibold text-gray-900"><%= number_to_currency(current_user.overdue_bills, precision: 2) %></span>
           </div>
         </div>
       </div>

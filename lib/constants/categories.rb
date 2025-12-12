@@ -9,8 +9,7 @@ module Constants
       "Personal Care",
       "Education",
       "Lifestyle",
-      "Shopping",
-      "General"
+      "Shopping"
     ].freeze
 
     INCOMES = [

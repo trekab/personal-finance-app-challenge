@@ -37,7 +37,7 @@
   <!-- Amount Display -->
   <div class="flex justify-between items-center mb-4 mt-8">
     <p class="text-sm text-gray-500">Total Saved</p>
-    <p class="text-2xl md:text-3xl font-bold text-gray-900">$<%= number_with_precision(pot.total_saved, precision: 2) %></p>
+    <p class="text-2xl md:text-3xl font-bold text-gray-900"><%= number_to_currency(pot.total_saved, precision: 2) %></p>
   </div>
 
   <!-- Progress Bar -->
@@ -47,7 +47,7 @@
     </div>
     <div class="flex items-center justify-between mt-2">
       <span class="text-xs text-gray-600"><%= number_with_precision(percentage, precision: 2) %>%</span>
-      <span class="text-xs text-gray-500">Target of $<%= number_with_precision(pot.target, precision: 2) %></span>
+      <span class="text-xs text-gray-500">Target of <%= number_to_currency(pot.target, precision: 2) %></span>
     </div>
   </div>
 

@@ -100,7 +100,7 @@
               </svg>
 
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="text-lg font-bold text-gray-900">$<%= number_with_precision(total_budget, precision: 0) %></div>
+                <div class="text-lg font-bold text-gray-900"><%= number_to_currency(total_budget, precision: 0) %></div>
                 <div class="text-sm text-gray-500">of <%= @budgets.count %> budgets</div>
               </div>
             </div>
@@ -116,8 +116,8 @@
                     <span class="text-sm text-gray-700"><%= budget.category %></span>
                   </div>
                   <div class="flex items-center space-x-4">
-                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
-                    <span class="text-xs text-gray-400">of $<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
+                    <span class="text-sm font-semibold text-gray-900"><%= number_to_currency(budget.spent_this_month, precision: 2) %></span>
+                    <span class="text-xs text-gray-400">of <%= number_to_currency(budget.maximum_spend, precision: 2) %></span>
                   </div>
                 </div>
               <% end %>
@@ -158,7 +158,7 @@
 
                 </div>
 
-                <div class="text-sm text-gray-600 mb-2">Maximum of $<%= number_with_precision(budget.maximum_spend, precision: 2) %></div>
+                <div class="text-sm text-gray-600 mb-2">Maximum of <%= number_to_currency(budget.maximum_spend, precision: 2) %></div>
 
                 <!-- Progress Bar -->
                 <% spent_percentage = (budget.spent_this_month / budget.maximum_spend) * 100 %>
@@ -177,7 +177,7 @@
                       <div class="flex items-center space-x-2 mb-1">
                         <span class="text-xs text-gray-600">Spent</span>
                       </div>
-                      <div class="text-sm font-semibold text-gray-900">$<%= number_with_precision(spent_amount, precision: 2) %></div>
+                      <div class="text-sm font-semibold text-gray-900"><%= number_to_currency(spent_amount, precision: 2) %></div>
                     </div>
                   </div>
                   <div class="flex flex-1">
@@ -186,7 +186,7 @@
                       <div class="flex items-center space-x-2 mb-1">
                         <span class="text-xs text-gray-600">Remaining</span>
                       </div>
-                      <div class="text-sm font-semibold text-gray-900">$<%= number_with_precision(remaining_amount, precision: 2) %></div>
+                      <div class="text-sm font-semibold text-gray-900"><%= number_to_currency(remaining_amount, precision: 2) %></div>
                     </div>
                   </div>
                 </div>
