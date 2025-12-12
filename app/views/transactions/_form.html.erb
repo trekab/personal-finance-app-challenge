@@ -1,0 +1,35 @@
+<%= simple_form_for(@transaction, data: { turbo_frame: "_top" }) do |f| %>
+<%= f.error_notification %>
+<%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+<%= f.input :transaction_type, as: :hidden, input_html: { value: @transaction.transaction_type } %>
+<%= f.input :customizable_type, as: :hidden, input_html: { value: @transaction.customizable_type } %>
+<%= f.input :customizable_id, as: :hidden, input_html: { value: @transaction.customizable_id } %>
+
+<div class="form-inputs">
+  <%= f.input :date, html5: true %>
+  <div class="relative">
+    <%= f.input :amount,
+                input_html: {
+                  step: 0.01,
+                  placeholder: "e.g. 100.00",
+                  class: "pl-8"
+                },
+                wrapper_html: { class: "relative" } %>
+
+    <span class="absolute left-3 top-8 text-gray-500 pointer-events-none z-10">$</span>
+  </div>
+  <% list = if @transaction.customizable_type.nil?
+              Constants::Categories::LIST
+            elsif @transaction.customizable_type == "Pot"
+              ["General"]
+            else
+              Constants::Categories::LIST
+            end %>
+  <%= f.input :category, collection: list, prompt: nil %>
+</div>
+
+<div class="form-actions">
+  <%= f.button :submit, class: "w-full" %>
+</div>
+<% end %>

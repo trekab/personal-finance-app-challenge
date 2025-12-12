@@ -1,0 +1,257 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Transactions</h1>
+    <%= link_to new_transaction_path(transaction_type: :expense), data: { turbo_frame: "modal" },
+                class: "btn btn-primary" do %>
+      + Add New Expense
+    <% end %>
+  </div>
+
+  <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-sm px-4 py-4 sm:px-6">
+    <!-- Filters Section with Loading State -->
+    <div data-controller="loading"
+         data-action="turbo:submit-start->loading#show turbo:submit-end->loading#hide turbo:frame-load->loading#hide"
+         class="relative">
+
+      <%= turbo_frame_tag "transactions_filters" do %>
+        <%= form_with url: transactions_path, method: :get,
+                      data: {
+                        turbo_frame: "transactions_list",
+                        turbo_action: "advance",
+                        controller: "auto-submit",
+                        action: "change->auto-submit#submit"
+                      },
+                      class: "pt-4 mb-4" do |f| %>
+
+          <div class="flex flex-row gap-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+            <!-- Search Bar -->
+            <div class="relative w-full md:col-span-1">
+              <%= f.text_field :search,
+                               value: params[:search],
+                               placeholder: "Search transaction",
+                               data: { action: "input->auto-submit#submit" },
+                               class: "w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+
+              <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="flex flex-row gap-3 md:col-span-2 md:justify-between">
+              <!-- Sort Filter -->
+              <div class="w-full flex items-center gap-2">
+                <!-- Mobile Icon -->
+                <button type="button" class="sm:hidden p-2 border rounded-lg">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 4h18M6 10h12M10 16h4"/>
+                  </svg>
+                </button>
+
+                <!-- Desktop/Tablet Label + Dropdown -->
+                <div class="hidden sm:flex items-center gap-2 w-full">
+                  <span class="text-sm text-gray-600 whitespace-nowrap">Sort by</span>
+
+                  <%= f.select :sort,
+                               [
+                                 ['Latest', 'latest'],
+                                 ['Oldest', 'oldest'],
+                                 ['Highest', 'highest'],
+                                 ['Lowest', 'lowest']
+                               ],
+                               { selected: params[:sort] || 'latest' },
+                               class: "w-full px-3 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900" %>
+                </div>
+              </div>
+
+              <!-- Category Filter -->
+              <div class="w-full flex items-center gap-2">
+                <!-- Mobile Icon -->
+                <button type="button" class="sm:hidden p-2 border rounded-lg">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5.5 8h13M6.5 12h11M9 16h6"/>
+                  </svg>
+                </button>
+
+                <!-- Desktop/Tablet Label + Dropdown -->
+                <div class="hidden sm:flex items-center gap-2 w-full">
+                  <span class="text-sm text-gray-600 whitespace-nowrap">Category</span>
+                  <%= f.select :category,
+                               ["All"] + Constants::Categories::LIST,
+                               { selected: params[:category] || 'All' },
+                               class: "w-full px-3 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <!-- Loading Spinner Overlay -->
+      <div data-loading-target="spinner"
+           class="hidden absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-lg z-10">
+        <div class="flex flex-col items-center gap-3">
+          <!-- Spinner -->
+          <div class="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-gray-900"></div>
+          <!-- Loading Text -->
+          <p class="text-sm text-gray-600 font-medium">Loading transactions...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Table - Desktop/Tablet -->
+    <%= turbo_frame_tag "transactions_list" do %>
+      <div class="hidden sm:block overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Transaction Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Transaction Date</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">Amount</th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <% if @transactions.any? %>
+            <% @transactions.each do |transaction| %>
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                      <div class="avatar avatar-placeholder">
+                        <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                          <span class="text-3xl"><%= transaction.transaction_type.humanize[0] %></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900"><%= transaction.transaction_type.humanize %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500"><%= transaction.category %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                  <div class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                    <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="4" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center gap-2">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  <p class="text-gray-500 font-medium">No transactions found</p>
+                  <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Transactions List - Mobile -->
+      <div class="sm:hidden divide-y divide-gray-200">
+        <% if @transactions.any? %>
+          <% @transactions.each do |transaction| %>
+            <div class="px-4 py-4 hover:bg-gray-50 transition-colors duration-150">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center flex-1 min-w-0">
+                  <div class="flex-shrink-0">
+                    <div class="avatar avatar-placeholder">
+                      <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                        <span class="text-3xl"><%= transaction.transaction_type.humanize[0] %></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ml-3 flex-1 min-w-0">
+                    <p class="text-md font-medium text-gray-900 truncate"><%= transaction.transaction_type.humanize %></p>
+                    <p class="text-xs text-gray-500"><%= transaction.category %></p>
+                  </div>
+                </div>
+                <div class="ml-4 flex-shrink-0 text-right">
+                  <p class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                    <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                  </p>
+                  <p class="text-xs text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="px-4 py-12 text-center">
+            <div class="flex flex-col items-center gap-2">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <p class="text-gray-500 font-medium">No transactions found</p>
+              <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <% if @transactions.any? %>
+        <div class="px-4 py-4 sm:px-6 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <% if @pagy.page > 1 %>
+              <%= link_to "Prev",
+                          transactions_path(page: @pagy.page - 1, search: params[:search], sort: params[:sort], category: params[:category]),
+                          class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+              %>
+            <% else %>
+              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+                Prev
+              </span>
+            <% end %>
+
+            <div class="flex gap-2">
+              <% (1..@pagy.pages).each do |page_num| %>
+                <% if page_num == @pagy.page %>
+                  <span class="px-3 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg">
+                    <%= page_num %>
+                  </span>
+                <% else %>
+                  <%= link_to page_num,
+                              transactions_path(page: page_num, search: params[:search], sort: params[:sort], category: params[:category]),
+                              class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @pagy.page < @pagy.pages %>
+              <%= link_to "Next",
+                          transactions_path(page: @pagy.page + 1, search: params[:search], sort: params[:sort], category: params[:category]),
+                          class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+              %>
+            <% else %>
+              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+                Next
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

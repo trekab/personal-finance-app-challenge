@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_11_103123) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_140005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,6 +43,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_103123) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.bigint "customizable_id"
+    t.string "customizable_type"
+    t.datetime "date", null: false
+    t.integer "transaction_type", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["customizable_type", "customizable_id"], name: "index_transactions_on_customizable"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
@@ -55,4 +69,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_103123) do
   add_foreign_key "budgets", "users"
   add_foreign_key "pots", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "transactions", "users"
 end

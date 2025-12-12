@@ -84,3 +84,6 @@ gem "simple_form"
 
 # Faker gem for generating fake data [https://github.com/faker-ruby/faker]
 gem "faker"
+
+# Pagy gem for pagination [https://github.com/ddnexus/pagy]
+gem "pagy"

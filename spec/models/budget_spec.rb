@@ -33,8 +33,8 @@ RSpec.describe Budget, type: :model do
 
   describe "constants" do
     it "has the correct CATEGORIES" do
-      expect(Budget::CATEGORIES).to include("Entertainment", "Bills", "General")
-      expect(Budget::CATEGORIES.size).to eq(10)
+      expect(Constants::Categories::LIST).to include("Entertainment", "Bills", "General")
+      expect(Constants::Categories::LIST.size).to eq(10)
     end
 
     it "has the correct THEMES" do

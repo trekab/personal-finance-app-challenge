@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :transactions
   resources :pots, except: :show do
     member do
       get :initiate_delete

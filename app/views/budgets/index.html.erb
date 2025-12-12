@@ -161,8 +161,8 @@
                 <div class="text-sm text-gray-600 mb-2">Maximum of $<%= number_with_precision(budget.maximum_spend, precision: 2) %></div>
 
                 <!-- Progress Bar -->
-                <% spent_percentage = rand(40..90) %>
-                <% spent_amount = budget.maximum_spend * (spent_percentage / 100.0) %>
+                <% spent_percentage = (budget.spent_this_month / budget.maximum_spend) * 100 %>
+                <% spent_amount = budget.spent_this_month %>
                 <% remaining_amount = budget.maximum_spend - spent_amount %>
 
                 <div class="w-full bg-gray-100 rounded h-10 p-1 mb-4 relative overflow-hidden">
@@ -205,18 +205,29 @@
 
                   <!-- Transactions -->
                   <div class="space-y-3">
-                    <% 3.times do |i| %>
-                      <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                        <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                            <span class="text-xs font-semibold text-gray-600"><%= ['ST', 'JD', 'AM'][i] %></span>
+                    <% budget.budget_transactions.each do |transaction| %>
+                      <div class="px-4 py-4 hover:bg-gray-50 border-b border-gray-300 last:border-0">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center flex-1 min-w-0">
+                            <div class="flex-shrink-0">
+                              <div class="avatar avatar-placeholder">
+                                <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                                  <span class="text-xl"><%= transaction.transaction_type.humanize[0] %></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="ml-3 flex-1 min-w-0">
+                              <p class="text-md font-medium text-gray-900 truncate"><%= transaction.transaction_type.humanize %></p>
+                              <p class="text-xs text-gray-500"><%= transaction.category %></p>
+                            </div>
                           </div>
-                          <div>
-                            <div class="text-sm font-medium text-gray-900"><%= ['Store Name', 'John Doe', 'Another Merchant'][i] %></div>
-                            <div class="text-xs text-gray-500"><%= (Date.today - rand(1..10)).strftime('%d %b %Y') %></div>
+                          <div class="ml-4 flex-shrink-0 text-right">
+                            <p class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                              <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                            </p>
+                            <p class="text-xs text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></p>
                           </div>
                         </div>
-                        <div class="text-sm font-semibold text-gray-900">$<%= sprintf('%.2f', rand(10.0..100.0)) %></div>
                       </div>
                     <% end %>
                   </div>

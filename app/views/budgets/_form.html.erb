@@ -4,7 +4,7 @@
 
 <div>
   <%= f.input :category,
-              collection: Budget::CATEGORIES,
+              collection: Constants::Categories::LIST,
               prompt: nil %>
   <div class="relative">
     <%= f.input :maximum_spend,

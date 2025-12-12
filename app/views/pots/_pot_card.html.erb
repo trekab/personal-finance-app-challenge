@@ -53,10 +53,16 @@
 
   <!-- Action Buttons -->
   <div class="flex gap-2 pt-3">
-    <%= link_to '#', class: "btn bg-beige text-black flex-1" do %>
+    <%= link_to new_transaction_path(transaction_type: :deposit,
+                                     customizable_type: pot.class,
+                                     customizable_id: pot.id), data: { turbo_frame: "modal" },
+                class: "btn bg-beige text-black flex-1" do %>
       + Add Money
     <% end %>
-    <%= link_to '#', class: "flex-1 btn bg-beige" do %>
+    <%= link_to new_transaction_path(transaction_type: :withdraw,
+                                     customizable_type: pot.class,
+                                     customizable_id: pot.id), data: { turbo_frame: "modal" },
+                class: "flex-1 btn bg-beige" do %>
       Withdraw
     <% end %>
   </div>

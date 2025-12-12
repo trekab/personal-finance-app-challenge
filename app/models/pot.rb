@@ -4,6 +4,8 @@ class Pot < ApplicationRecord
   validates :target, presence: true, numericality: { greater_than: 0 }
   validates :theme, :pot_name, presence: true
 
+  has_many :transactions, as: :customizable, dependent: :destroy
+
   THEMES = %w[Green Yellow Cyan Navy Red Purple]
   COLOR_MAP = {
     "Green"  => "#2f7f6b",
@@ -20,7 +22,7 @@ class Pot < ApplicationRecord
 
   # Calculate total saved in this pot
   def total_saved
-    500 # TODO: Implement
+    transactions.deposit.sum(:amount) - transactions.withdraw.sum(:amount)
   end
 
   # Calculate percentage towards target

@@ -4,7 +4,6 @@ class Budget < ApplicationRecord
   validates :maximum_spend, presence: true, numericality: { greater_than: 0 }
   validates :theme, :category, presence: true
 
-  CATEGORIES = [ "Entertainment", "Bills", "Groceries", "Dining Out", "Transportation", "Personal Care", "Education", "Lifestyle", "Shopping", "General" ]
   THEMES = %w[Green Yellow Cyan Navy Red Purple]
   COLOR_MAP = {
     "Green"  => "#2f7f6b",
@@ -41,6 +40,15 @@ class Budget < ApplicationRecord
           .where.not(id: id)
           .pluck(:theme)
           .include?(theme)
+  end
+
+  def spent_this_month
+    Transaction.where(created_at: Time.now.beginning_of_month..Time.now,
+                       category: self.category).sum(:amount)
+  end
+
+  def budget_transactions
+    Transaction.where(category: self.category).order(created_at: :desc).limit(3)
   end
 
 end

@@ -4,11 +4,17 @@
 
 import { application } from "./application"
 
+import AutoSubmitController from "./auto_submit_controller"
+application.register("auto-submit", AutoSubmitController)
+
 import CounterController from "./counter_controller"
 application.register("counter", CounterController)
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import LoadingController from "./loading_controller"
+application.register("loading", LoadingController)
 
 import ModalController from "./modal_controller"
 application.register("modal", ModalController)

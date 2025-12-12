@@ -1,8 +1,8 @@
 FactoryBot.define do
-  factory :budget do
+  factory :transaction do
+    date { Time.current }
+    amount { "5000" }
     category { Constants::Categories::LIST.sample }
-    maximum_spend { "9000" }
-    theme { Budget::THEMES.sample }
     user
   end
 end
