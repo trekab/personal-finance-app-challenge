@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="flex justify-between items-center mb-8">
+  <div class="block md:flex justify-between items-center mb-8">
     <h1 class="text-3xl font-bold text-gray-900">Transactions</h1>
-    <div>
+    <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0 md:block">
       <%= link_to new_transaction_path(transaction_type: :income), data: { turbo_frame: "modal" },
                   class: "btn btn-success" do %>
         + New Income
@@ -272,14 +272,94 @@
                           class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
               %>
             <% else %>
-              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
-                Prev
-              </span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+          Prev
+        </span>
             <% end %>
 
-            <div class="flex gap-2">
-              <% (1..@pagy.pages).each do |page_num| %>
-                <% if page_num == @pagy.page %>
+            <!-- Desktop/Tablet Pagination -->
+            <div class="hidden sm:flex gap-2">
+              <%
+                current_page = @pagy.page
+                total_pages = @pagy.pages
+
+                # Logic for desktop/tablet
+                if total_pages <= 7
+                  pages_to_show = (1..total_pages).to_a
+                else
+                  pages_to_show = [1]
+
+                  if current_page <= 4
+                    pages_to_show += (2..5).to_a
+                    pages_to_show << :ellipsis
+                    pages_to_show << total_pages
+                  elsif current_page >= total_pages - 3
+                    pages_to_show << :ellipsis
+                    pages_to_show += ((total_pages - 4)..total_pages).to_a
+                  else
+                    pages_to_show << :ellipsis
+                    pages_to_show += ((current_page - 1)..(current_page + 1)).to_a
+                    pages_to_show << :ellipsis
+                    pages_to_show << total_pages
+                  end
+                end
+              %>
+
+              <% pages_to_show.each do |page_num| %>
+                <% if page_num == :ellipsis %>
+            <span class="px-3 py-2 text-sm font-medium text-gray-400">
+              ...
+            </span>
+                <% elsif page_num == current_page %>
+            <span class="px-3 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg">
+              <%= page_num %>
+            </span>
+                <% else %>
+                  <%= link_to page_num,
+                              transactions_path(page: page_num, search: params[:search], sort: params[:sort], category: params[:category]),
+                              class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <!-- Mobile Pagination (Max 5 items) -->
+            <div class="flex sm:hidden gap-2 mx-2">
+              <%
+                current_page = @pagy.page
+                total_pages = @pagy.pages
+
+                # Logic for mobile - max 5 items
+                if total_pages <= 3
+                  mobile_pages = (1..total_pages).to_a
+                else
+                  mobile_pages = [1]
+
+                  if current_page <= 2
+                    # Near beginning: 1 2 3 ... 15
+                    mobile_pages += [2]
+                    mobile_pages << :ellipsis
+                    mobile_pages << total_pages
+                  elsif current_page >= total_pages - 2
+                    # Near end: 1 ... 13 14 15
+                    mobile_pages << :ellipsis
+                    mobile_pages += ((total_pages - 2)..total_pages).to_a
+                  else
+                    # In middle: 1 ... 7 ... 15
+                    mobile_pages << :ellipsis
+                    mobile_pages << current_page
+                    mobile_pages << :ellipsis
+                    mobile_pages << total_pages
+                  end
+                end
+              %>
+
+              <% mobile_pages.each do |page_num| %>
+                <% if page_num == :ellipsis %>
+                  <span class="px-2 py-2 text-sm font-medium text-gray-400">
+                    ...
+                  </span>
+                <% elsif page_num == current_page %>
                   <span class="px-3 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg">
                     <%= page_num %>
                   </span>
@@ -298,9 +378,9 @@
                           class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
               %>
             <% else %>
-              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
-                Next
-              </span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+          Next
+        </span>
             <% end %>
           </div>
         </div>
