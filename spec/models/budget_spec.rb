@@ -33,12 +33,12 @@ RSpec.describe Budget, type: :model do
 
   describe "constants" do
     it "has the correct CATEGORIES" do
-      expect(Constants::Categories::LIST).to include("Entertainment", "Bills", "General")
-      expect(Constants::Categories::LIST.size).to eq(10)
+      expect(Constants::Categories::LIST).to include("Entertainment", "Bills", "Shopping")
+      expect(Constants::Categories::LIST.size).to eq(9)
     end
 
     it "has the correct THEMES" do
-      expect(Budget::THEMES).to match_array(%w[Green Yellow Cyan Navy Red Purple])
+      expect(Budget::THEMES).to match_array(%w[Green Yellow Cyan Navy Red Purple Blue Turquoise Orange Pink Grey])
     end
 
     it "has the correct COLOR_MAP" do
@@ -68,7 +68,7 @@ RSpec.describe Budget, type: :model do
       create(:budget, user: user, theme: "Green")
 
       expect(Budget.available_themes(nil, user.id))
-        .to match_array(%w[Yellow Cyan Navy Red Purple])
+        .to match_array(%w[Yellow Cyan Navy Red Purple Blue Turquoise Orange Pink Grey])
     end
 
     it "excludes themes used by all budgets except the given id" do
@@ -77,7 +77,7 @@ RSpec.describe Budget, type: :model do
 
       # If editing b2, only Green remains blocked
       expect(Budget.available_themes(b2.id, user.id))
-        .to match_array(%w[Yellow Cyan Navy Purple] + ["Red"]) # Red becomes available for itself
+        .to match_array(%w[Yellow Cyan Navy Purple Blue Turquoise Orange Pink Grey] + ["Red"]) # Red becomes available for itself
     end
   end
 
