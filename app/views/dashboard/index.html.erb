@@ -1,14 +1,279 @@
-<div class="p-8">
-  <div class="flex justify-between">
-    <div></div>
-    <div>
-      <%= link_to 'Logout', session_path, class: "btn btn-primary", data: { turbo_method: :delete } %>
+<div class="min-h-screen p-4 md:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="flex justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Overview</h1>
+    <%= link_to 'Logout', session_path, class: "btn btn-primary", data: { turbo_method: :delete } %>
+  </div>
+
+  <!-- Balance Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <!-- Current Balance -->
+    <div class="bg-gray-900 text-white rounded-xl p-6">
+      <p class="text-sm text-gray-400 mb-2">Current Balance</p>
+      <p class="text-3xl font-bold"><%= number_to_currency(current_user.current_balance, precision: 2) %></p>
+    </div>
+
+    <!-- Income -->
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+      <p class="text-sm text-gray-500 mb-2">Income</p>
+      <p class="text-3xl font-bold text-gray-900"><%= number_to_currency(current_user.total_income, precision: 2) %></p>
+    </div>
+
+    <!-- Expenses -->
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+      <p class="text-sm text-gray-500 mb-2">Expenses</p>
+      <p class="text-3xl font-bold text-gray-900"><%= number_to_currency(current_user.total_expense, precision: 2) %></p>
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-8 mt-4">
-    <h1>Dashboard#index</h1>
-    <p>Find me in app/views/dashboard/index.html.erb</p>
-  </div>
-</div>
+  <!-- Two Column Layout for Desktop/Tablet -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div>
+      <!-- Pots Card -->
+      <div class="bg-white rounded-xl p-6 border border-gray-200 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Pots</h2>
+          <%= link_to 'See Details →', pots_path, class: 'text-sm text-blue-600 hover:text-blue-700' %>
+        </div>
 
+        <div class="flex items-start space-x-4">
+          <div class="flex bg-beige p-7 rounded-xl gap-4 flex-1">
+            <div class="flex items-center justify-center">
+              <svg width="27" height="35" viewBox="0 0 27 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.875 5.075V2.1875C21.875 1.60734 21.6445 1.05094 21.2343 0.640704C20.8241 0.230468 20.2677 0 19.6875 0H7.1875C6.60734 0 6.05094 0.230468 5.6407 0.640704C5.23047 1.05094 5 1.60734 5 2.1875V5.075C3.60625 5.29946 2.33786 6.01255 1.42177 7.08665C0.505689 8.16076 0.00170468 9.52579 0 10.9375V28.4375C0 30.0122 0.625556 31.5224 1.73905 32.6359C2.85255 33.7494 4.36278 34.375 5.9375 34.375H20.9375C22.5122 34.375 24.0224 33.7494 25.1359 32.6359C26.2494 31.5224 26.875 30.0122 26.875 28.4375V10.9375C26.8733 9.52579 26.3693 8.16076 25.4532 7.08665C24.5371 6.01255 23.2687 5.29946 21.875 5.075ZM20 2.1875V5H16.875V1.875H19.6875C19.7704 1.875 19.8499 1.90792 19.9085 1.96653C19.9671 2.02513 20 2.10462 20 2.1875ZM11.875 5V1.875H15V5H11.875ZM7.1875 1.875H10V5H6.875V2.1875C6.875 2.10462 6.90792 2.02513 6.96653 1.96653C7.02513 1.90792 7.10462 1.875 7.1875 1.875ZM25 28.4375C25 28.971 24.8949 29.4993 24.6908 29.9922C24.4866 30.485 24.1874 30.9329 23.8101 31.3101C23.4329 31.6874 22.985 31.9866 22.4922 32.1908C21.9993 32.3949 21.471 32.5 20.9375 32.5H5.9375C5.40401 32.5 4.87573 32.3949 4.38285 32.1908C3.88996 31.9866 3.44212 31.6874 3.06488 31.3101C2.68764 30.9329 2.3884 30.485 2.18424 29.9922C1.98008 29.4993 1.875 28.971 1.875 28.4375V10.9375C1.875 9.86006 2.30301 8.82675 3.06488 8.06488C3.82675 7.30301 4.86006 6.875 5.9375 6.875H20.9375C22.0149 6.875 23.0483 7.30301 23.8101 8.06488C24.572 8.82675 25 9.86006 25 10.9375V28.4375ZM18.125 22.1875C18.125 23.0992 17.7628 23.9735 17.1182 24.6182C16.4735 25.2628 15.5992 25.625 14.6875 25.625H14.375V27.1875C14.375 27.4361 14.2762 27.6746 14.1004 27.8504C13.9246 28.0262 13.6861 28.125 13.4375 28.125C13.1889 28.125 12.9504 28.0262 12.7746 27.8504C12.5988 27.6746 12.5 27.4361 12.5 27.1875V25.625H10.9375C10.6889 25.625 10.4504 25.5262 10.2746 25.3504C10.0988 25.1746 10 24.9361 10 24.6875C10 24.4389 10.0988 24.2004 10.2746 24.0246C10.4504 23.8488 10.6889 23.75 10.9375 23.75H14.6875C15.1019 23.75 15.4993 23.5854 15.7924 23.2924C16.0854 22.9993 16.25 22.6019 16.25 22.1875C16.25 21.7731 16.0854 21.3757 15.7924 21.0826C15.4993 20.7896 15.1019 20.625 14.6875 20.625H12.1875C11.2758 20.625 10.4015 20.2628 9.75682 19.6182C9.11216 18.9735 8.75 18.0992 8.75 17.1875C8.75 16.2758 9.11216 15.4015 9.75682 14.7568C10.4015 14.1122 11.2758 13.75 12.1875 13.75H12.5V12.1875C12.5 11.9389 12.5988 11.7004 12.7746 11.5246C12.9504 11.3488 13.1889 11.25 13.4375 11.25C13.6861 11.25 13.9246 11.3488 14.1004 11.5246C14.2762 11.7004 14.375 11.9389 14.375 12.1875V13.75H15.9375C16.1861 13.75 16.4246 13.8488 16.6004 14.0246C16.7762 14.2004 16.875 14.4389 16.875 14.6875C16.875 14.9361 16.7762 15.1746 16.6004 15.3504C16.4246 15.5262 16.1861 15.625 15.9375 15.625H12.1875C11.7731 15.625 11.3757 15.7896 11.0826 16.0826C10.7896 16.3757 10.625 16.7731 10.625 17.1875C10.625 17.6019 10.7896 17.9993 11.0826 18.2924C11.3757 18.5854 11.7731 18.75 12.1875 18.75H14.6875C15.5992 18.75 16.4735 19.1122 17.1182 19.7568C17.7628 20.4015 18.125 21.2758 18.125 22.1875Z" fill="#277C78"/>
+              </svg>
+            </div>
+
+            <div class="flex-grow">
+              <p class="text-sm text-gray-500 mb-2">Total Saved</p>
+              <p class="text-2xl font-bold text-gray-900">$<%= number_with_precision(current_user.total_saved, precision: 2) %></p>
+            </div>
+          </div>
+
+          <div class="flex-1 grid grid-cols-2 gap-2">
+            <% current_user.pots.each do |pot| %>
+              <div class="py-2">
+                <div class="flex space-x-3">
+                  <div class="w-0.5 p-0.5 rounded <%= theme_bg_class(pot.theme) %>"></div>
+                  <div class="flex flex-col">
+                    <span class="text-sm text-gray-700"><%= pot.pot_name %></span>
+                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(pot.target, precision: 2) %></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Section -->
+      <div class="bg-white rounded-xl p-6 border border-gray-200 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Transactions</h2>
+          <%= link_to 'View All →', transactions_path, class: 'text-sm text-blue-600 hover:text-blue-700' %>
+        </div>
+
+        <div class="space-y-3 divide-y divide-gray-200">
+          <% if current_user.transactions.any? %>
+            <% current_user.transactions.order(date: :desc).limit(5).each do |transaction| %>
+              <div class="px-4 py-4 hover:bg-gray-50 transition-colors duration-150">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center flex-1 min-w-0">
+                    <div class="flex-shrink-0">
+                      <div class="avatar avatar-placeholder">
+                        <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                          <span class="text-lg"><%= transaction.transaction_type.humanize[0] %></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ml-3 flex-1 min-w-0">
+                      <p class="text-md font-medium text-gray-900 truncate"><%= transaction.transaction_type.humanize %></p>
+                      <p class="text-xs text-gray-500"><%= transaction.category %></p>
+                    </div>
+                  </div>
+                  <div class="ml-4 flex-shrink-0 text-right">
+                    <p class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                      <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                    </p>
+                    <p class="text-xs text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="px-4 py-12 text-center">
+              <div class="flex flex-col items-center gap-2">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-gray-500 font-medium">No transactions found</p>
+                <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Budgets Card with Donut Chart -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Budgets</h2>
+          <%= link_to 'See Details →', budgets_path, class: 'text-sm text-blue-600 hover:text-blue-700' %>
+        </div>
+
+        <div class="block md:grid md:grid-cols-3 md:gap-4">
+          <!-- Donut Chart -->
+          <div class="flex justify-center items-center md:col-span-2 w-full lg:my-8" style="height: 250px;">
+            <div class="relative">
+              <svg width="260" height="260" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Donut chart">
+                <%
+                  total_budget = current_user.budgets.sum(&:maximum_spend).to_f
+                  current_angle = -90.0
+                  outer_r = 90.0
+                  inner_r = 55.0
+                  fmt = ->(v) { sprintf("%.4f", v) }
+
+                  only_one = current_user.budgets.size == 1
+                %>
+
+                <% if only_one %>
+                  <% budget = current_user.budgets.first %>
+                  <% # Draw a full ring using stroke so a full 360deg donut always renders %>
+                  <% ring_center_r = (outer_r + inner_r) / 1.5
+                     stroke_w = 28
+                  %>
+
+                  <!-- full single-color ring (use class for color) -->
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="<%= fmt.call(ring_center_r) %>"
+                    fill="none"
+                    stroke-width="<%= fmt.call(stroke_w) %>"
+                    class="<%= theme_fill_class(budget.theme) %>"
+                    stroke-linecap="butt"
+                    />
+                <% else %>
+                  <% # Multiple slices: keep original path logic %>
+                  <% current_user.budgets.each do |budget|
+                    next if budget.maximum_spend.to_f <= 0
+
+                    percentage = (budget.maximum_spend.to_f / total_budget) * 100.0
+                    angle = (percentage / 100.0) * 360.0
+
+                    start_x = 100 + outer_r * Math.cos(current_angle * Math::PI / 180.0)
+                    start_y = 100 + outer_r * Math.sin(current_angle * Math::PI / 180.0)
+
+                    end_angle = current_angle + angle
+                    end_x = 100 + outer_r * Math.cos(end_angle * Math::PI / 180.0)
+                    end_y = 100 + outer_r * Math.sin(end_angle * Math::PI / 180.0)
+
+                    large_arc = angle >= 180.0 ? 1 : 0
+
+                    inner_start_x = 100 + inner_r * Math.cos(current_angle * Math::PI / 180.0)
+                    inner_start_y = 100 + inner_r * Math.sin(current_angle * Math::PI / 180.0)
+                    inner_end_x = 100 + inner_r * Math.cos(end_angle * Math::PI / 180.0)
+                    inner_end_y = 100 + inner_r * Math.sin(end_angle * Math::PI / 180.0)
+
+                    path =
+                      "M #{fmt.call(start_x)} #{fmt.call(start_y)} " \
+                        "A #{fmt.call(outer_r)} #{fmt.call(outer_r)} 0 #{large_arc} 1 #{fmt.call(end_x)} #{fmt.call(end_y)} " \
+                        "L #{fmt.call(inner_end_x)} #{fmt.call(inner_end_y)} " \
+                        "A #{fmt.call(inner_r)} #{fmt.call(inner_r)} 0 #{large_arc} 0 #{fmt.call(inner_start_x)} #{fmt.call(inner_start_y)} Z"
+
+                    current_angle = end_angle
+                  %>
+                    <path d="<%= path %>" class="<%= theme_fill_class(budget.theme) %>"/>
+                  <% end %>
+                <% end %>
+
+                <%# --- Semi-transparent inner ring (overlay) --- %>
+                <% ring_r = (inner_r + outer_r) / 3.0   # midpoint between outer and inner radii
+                   ring_stroke = 28  # slightly thinner than full thickness
+                %>
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="<%= fmt.call(ring_r) %>"
+                  fill="transparent"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="<%= fmt.call(ring_stroke) %>"
+                  style="mix-blend-mode: normal"
+                  />
+
+                <%# --- White center to hollow out donut --- %>
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="<%= fmt.call(inner_r) %>"
+                  fill="white"
+                  />
+              </svg>
+
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="text-lg font-bold text-gray-900">$<%= number_with_precision(total_budget, precision: 0) %></div>
+                <div class="text-sm text-gray-500">of <%= current_user.budgets.count %> budgets</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spending Summary -->
+          <div class="grid grid-cols-2 gap-4 md:block">
+            <% current_user.budgets.limit(4).each do |budget| %>
+              <div class="col-span-1 py-2">
+                <div class="flex space-x-3">
+                  <div class="w-0.5 p-0.5 rounded <%= theme_bg_class(budget.theme) %>"></div>
+                  <div class="flex flex-col">
+                    <span class="text-sm text-gray-700"><%= budget.category %></span>
+                    <span class="text-sm font-semibold text-gray-900">$<%= number_with_precision(budget.maximum_spend, precision: 2) %></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurring Bills Section -->
+      <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Recurring Bills</h2>
+          <%= link_to 'See Details →', recurring_bills_path, class: 'text-sm text-blue-600 hover:text-blue-700' %>
+
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div class="flex items-center">
+              <div class="w-1 h-10 bg-green-500 rounded-full mr-3"></div>
+              <span class="text-gray-900 font-medium">Paid Bills</span>
+            </div>
+            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.paid_bills, precision: 2) %></span>
+          </div>
+
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div class="flex items-center">
+              <div class="w-1 h-10 bg-yellow-500 rounded-full mr-3"></div>
+              <span class="text-gray-900 font-medium">Total Upcoming</span>
+            </div>
+            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.upcoming_bills, precision: 2) %></span>
+          </div>
+
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center">
+              <div class="w-1 h-10 bg-blue-400 rounded-full mr-3"></div>
+              <span class="text-gray-900 font-medium">Due Soon</span>
+            </div>
+            <span class="font-semibold text-gray-900">$<%= number_with_precision(current_user.overdue_bills, precision: 2) %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
