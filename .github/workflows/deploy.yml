@@ -3,7 +3,7 @@ name: Deploy with Kamal 2
 on:
   push:
     branches:
-      - main
+      - 'feature/finance-app-richard'
   workflow_dispatch:
 
 env:
