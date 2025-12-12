@@ -1,0 +1,390 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="block md:flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Transactions</h1>
+    <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0 md:block">
+      <%= link_to new_transaction_path(transaction_type: :income), data: { turbo_frame: "modal" },
+                  class: "btn btn-success" do %>
+        + New Income
+      <% end %>
+      <%= link_to new_transaction_path(transaction_type: :expense), data: { turbo_frame: "modal" },
+                  class: "btn btn-primary" do %>
+        + New Expense
+      <% end %>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-sm px-4 py-4 sm:px-6">
+    <!-- Filters Section with Loading State -->
+    <div data-controller="loading"
+         data-action="turbo:submit-start->loading#show turbo:submit-end->loading#hide turbo:frame-load->loading#hide"
+         class="relative">
+
+      <%= turbo_frame_tag "transactions_filters" do %>
+        <%= form_with url: transactions_path, method: :get,
+                      data: {
+                        turbo_frame: "transactions_list",
+                        turbo_action: "advance",
+                        controller: "auto-submit",
+                        action: "change->auto-submit#submit"
+                      },
+                      class: "pt-4 mb-4" do |f| %>
+
+          <div class="flex flex-row gap-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+            <!-- Search Bar -->
+            <div class="relative w-full md:col-span-1">
+              <%= f.text_field :search,
+                               value: params[:search],
+                               placeholder: "Search transaction",
+                               data: { action: "input->auto-submit#submit" },
+                               class: "w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+
+              <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="hidden lg:grid lg:col-span-1"></div>
+            <div class="flex flex-row gap-3 md:col-span-2 lg:col-span-1 md:justify-between">
+              <!-- Sort Filter -->
+              <div class="w-full flex items-center gap-2">
+                <!-- Mobile Dropdown (DaisyUI) -->
+                <div class="dropdown dropdown-end sm:hidden">
+                  <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.75 0L1.25 0C0.918479 0 0.600537 0.131696 0.366116 0.366116C0.131696 0.600537 0 0.918479 0 1.25L0 13.75C0 14.0815 0.131696 14.3995 0.366116 14.6339C0.600537 14.8683 0.918479 15 1.25 15L13.75 15C14.0815 15 14.3995 14.8683 14.6339 14.6339C14.8683 14.3995 15 14.0815 15 13.75L15 1.25C15 0.918479 14.8683 0.600537 14.6339 0.366116C14.3995 0.131696 14.0815 0 13.75 0ZM3.125 3.125L10.625 3.125C10.7908 3.125 10.9497 3.19085 11.0669 3.30806C11.1842 3.42527 11.25 3.58424 11.25 3.75C11.25 3.91576 11.1842 4.07473 11.0669 4.19194C10.9497 4.30915 10.7908 4.375 10.625 4.375L3.125 4.375C2.95924 4.375 2.80027 4.30915 2.68306 4.19194C2.56585 4.07473 2.5 3.91576 2.5 3.75C2.5 3.58424 2.56585 3.42527 2.68306 3.30806C2.80027 3.19085 2.95924 3.125 3.125 3.125ZM6.25 11.875L3.125 11.875C2.95924 11.875 2.80027 11.8092 2.68306 11.6919C2.56585 11.5747 2.5 11.4158 2.5 11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625L6.25 10.625C6.41576 10.625 6.57473 10.6908 6.69194 10.8081C6.80915 10.9253 6.875 11.0842 6.875 11.25C6.875 11.4158 6.80915 11.5747 6.69194 11.6919C6.57473 11.8092 6.41576 11.875 6.25 11.875ZM6.875 8.125L3.125 8.125C2.95924 8.125 2.80027 8.05915 2.68306 7.94194C2.56585 7.82473 2.5 7.66576 2.5 7.5C2.5 7.33424 2.56585 7.17527 2.68306 7.05806C2.80027 6.94085 2.95924 6.875 3.125 6.875H6.875C7.04076 6.875 7.19973 6.94085 7.31694 7.05806C7.43415 7.17527 7.5 7.33424 7.5 7.5C7.5 7.66576 7.43415 7.82473 7.31694 7.94194C7.19973 8.05915 7.04076 8.125 6.875 8.125ZM12.9422 10.4422L11.0672 12.3172C11.0091 12.3753 10.9402 12.4214 10.8643 12.4529C10.7885 12.4843 10.7071 12.5005 10.625 12.5005C10.5429 12.5005 10.4615 12.4843 10.3857 12.4529C10.3098 12.4214 10.2409 12.3753 10.1828 12.3172L8.30781 10.4422C8.19054 10.3249 8.12465 10.1659 8.12465 10C8.12465 9.83415 8.19054 9.67509 8.30781 9.55781C8.42509 9.44054 8.58415 9.37465 8.75 9.37465C8.91585 9.37465 9.07491 9.44054 9.19219 9.55781L10 10.3664V6.875C10 6.70924 10.0658 6.55027 10.1831 6.43306C10.3003 6.31585 10.4592 6.25 10.625 6.25C10.7908 6.25 10.9497 6.31585 11.0669 6.43306C11.1842 6.55027 11.25 6.70924 11.25 6.875V10.3664L12.0578 9.55781C12.1751 9.44054 12.3341 9.37465 12.5 9.37465C12.6659 9.37465 12.8249 9.44054 12.9422 9.55781C13.0595 9.67509 13.1253 9.83415 13.1253 10C13.1253 10.1659 13.0595 10.3249 12.9422 10.4422Z" fill="#201F24"/>
+                    </svg>
+                  </div>
+                  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li class="menu-title text-xs">Sort by</li>
+                    <li><a href="#" data-sort="latest" class="filter-option">Latest</a></li>
+                    <li><a href="#" data-sort="oldest" class="filter-option">Oldest</a></li>
+                    <li><a href="#" data-sort="highest" class="filter-option">Highest</a></li>
+                    <li><a href="#" data-sort="lowest" class="filter-option">Lowest</a></li>
+                  </ul>
+                </div>
+
+                <!-- Desktop/Tablet Label + Dropdown -->
+                <div class="hidden sm:flex items-center gap-2 w-full">
+                  <span class="text-sm text-gray-600 whitespace-nowrap">Sort by</span>
+                  <%= f.select :sort,
+                               [
+                                 ['Latest', 'latest'],
+                                 ['Oldest', 'oldest'],
+                                 ['Highest', 'highest'],
+                                 ['Lowest', 'lowest']
+                               ],
+                               { selected: params[:sort] || 'latest' },
+                               class: "w-full px-3 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900" %>
+                </div>
+              </div>
+
+              <!-- Category Filter -->
+              <div class="w-full flex items-center gap-2">
+                <!-- Mobile Dropdown (DaisyUI) -->
+                <div class="dropdown dropdown-end sm:hidden">
+                  <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+                    <svg width="17" height="15" viewBox="0 0 17 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15.9202 2.09063L15.9139 2.09766L10.6225 7.74766V12.0828C10.6228 12.289 10.5721 12.492 10.475 12.6739C10.3778 12.8557 10.2371 13.0107 10.0655 13.125L7.56551 14.7922C7.37711 14.9177 7.15817 14.9897 6.93206 15.0004C6.70595 15.0112 6.48116 14.9604 6.28168 14.8534C6.0822 14.7464 5.91552 14.5872 5.79943 14.3929C5.68334 14.1986 5.6222 13.9764 5.62254 13.75L5.62254 7.74766L0.331132 2.09766L0.324882 2.09063C0.162184 1.91157 0.0549408 1.68916 0.0161627 1.45036C-0.0226154 1.21156 0.00873761 0.966633 0.106418 0.7453C0.204099 0.523967 0.36391 0.335737 0.566464 0.203443C0.769017 0.0711486 1.00561 0.000476687 1.24754 0L14.9975 0C15.2397 2.35149e-05 15.4766 0.0703676 15.6795 0.202485C15.8824 0.334603 16.0426 0.522807 16.1405 0.74423C16.2385 0.965653 16.27 1.21076 16.2313 1.44978C16.1927 1.68879 16.0854 1.91143 15.9225 2.09063H15.9202Z" fill="#201F24"/>
+                    </svg>
+                  </div>
+                  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow max-h-150 overflow-y-auto">
+                    <li class="menu-title text-xs">Category</li>
+                    <li><a href="#" data-category="All" class="filter-option">All</a></li>
+                    <% Constants::Categories::LIST.each do |category| %>
+                      <li><a href="#" data-category="<%= category %>" class="filter-option"><%= category %></a></li>
+                    <% end %>
+                  </ul>
+                </div>
+
+                <!-- Desktop/Tablet Label + Dropdown -->
+                <div class="hidden sm:flex items-center gap-2 w-full">
+                  <span class="text-sm text-gray-600 whitespace-nowrap">Category</span>
+                  <%= f.select :category,
+                               ["All"] + Constants::Categories::LIST,
+                               { selected: params[:category] || 'All' },
+                               class: "w-full px-3 py-2 border border-gray-300 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-gray-900" %>
+                </div>
+              </div>
+            </div>
+
+            <script>
+                // Handle filter option clicks
+                document.addEventListener('click', function (e) {
+                    if (e.target.classList.contains('filter-option')) {
+                        e.preventDefault();
+
+                        const form = e.target.closest('form');
+                        if (!form) return;
+
+                        // Get the filter type (sort or category)
+                        const sortValue = e.target.dataset.sort;
+                        const categoryValue = e.target.dataset.category;
+
+                        if (sortValue) {
+                            const sortSelect = form.querySelector('select[name="sort"]');
+                            if (sortSelect) sortSelect.value = sortValue;
+                        }
+
+                        if (categoryValue) {
+                            const categorySelect = form.querySelector('select[name="category"]');
+                            if (categorySelect) categorySelect.value = categoryValue;
+                        }
+
+                        // Submit the form
+                        form.requestSubmit();
+
+                        // Close dropdown by removing focus
+                        document.activeElement.blur();
+                    }
+                });
+            </script>
+          </div>
+        <% end %>
+      <% end %>
+
+      <!-- Loading Spinner Overlay -->
+      <div data-loading-target="spinner"
+           class="hidden absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-lg z-10">
+        <div class="flex flex-col items-center gap-3">
+          <!-- Spinner -->
+          <div class="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-gray-900"></div>
+          <!-- Loading Text -->
+          <p class="text-sm text-gray-600 font-medium">Loading transactions...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Table - Desktop/Tablet -->
+    <%= turbo_frame_tag "transactions_list" do %>
+      <div class="hidden sm:block overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Transaction Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Transaction Date</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">Amount</th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <% if @transactions.any? %>
+            <% @transactions.each do |transaction| %>
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                      <div class="avatar avatar-placeholder">
+                        <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                          <span class="text-3xl"><%= transaction.transaction_type.humanize[0] %></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900"><%= transaction.transaction_type.humanize %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500"><%= transaction.category %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                  <div class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                    <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="4" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center gap-2">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  <p class="text-gray-500 font-medium">No transactions found</p>
+                  <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Transactions List - Mobile -->
+      <div class="sm:hidden divide-y divide-gray-200">
+        <% if @transactions.any? %>
+          <% @transactions.each do |transaction| %>
+            <div class="px-4 py-4 hover:bg-gray-50 transition-colors duration-150">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center flex-1 min-w-0">
+                  <div class="flex-shrink-0">
+                    <div class="avatar avatar-placeholder">
+                      <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                        <span class="text-3xl"><%= transaction.transaction_type.humanize[0] %></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ml-3 flex-1 min-w-0">
+                    <p class="text-md font-medium text-gray-900 truncate"><%= transaction.transaction_type.humanize %></p>
+                    <p class="text-xs text-gray-500"><%= transaction.category %></p>
+                  </div>
+                </div>
+                <div class="ml-4 flex-shrink-0 text-right">
+                  <p class="text-sm font-semibold <%= transaction_amount(transaction) >= 0 ? 'text-green-600' : 'text-gray-900' %>">
+                    <%= transaction_amount(transaction) >= 0 ? '+' : '-' %><%= number_to_currency(transaction.amount, precision: 2) %>
+                  </p>
+                  <p class="text-xs text-gray-500"><%= transaction.date.strftime("%d %b %Y") %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="px-4 py-12 text-center">
+            <div class="flex flex-col items-center gap-2">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <p class="text-gray-500 font-medium">No transactions found</p>
+              <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <% if @transactions.any? %>
+        <div class="px-4 py-4 sm:px-6 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <% if @pagy.page > 1 %>
+              <%= link_to "Prev",
+                          transactions_path(page: @pagy.page - 1, search: params[:search], sort: params[:sort], category: params[:category]),
+                          class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+              %>
+            <% else %>
+        <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+          Prev
+        </span>
+            <% end %>
+
+            <!-- Desktop/Tablet Pagination -->
+            <div class="hidden sm:flex gap-2">
+              <%
+                current_page = @pagy.page
+                total_pages = @pagy.pages
+
+                # Logic for desktop/tablet
+                if total_pages <= 7
+                  pages_to_show = (1..total_pages).to_a
+                else
+                  pages_to_show = [1]
+
+                  if current_page <= 4
+                    pages_to_show += (2..5).to_a
+                    pages_to_show << :ellipsis
+                    pages_to_show << total_pages
+                  elsif current_page >= total_pages - 3
+                    pages_to_show << :ellipsis
+                    pages_to_show += ((total_pages - 4)..total_pages).to_a
+                  else
+                    pages_to_show << :ellipsis
+                    pages_to_show += ((current_page - 1)..(current_page + 1)).to_a
+                    pages_to_show << :ellipsis
+                    pages_to_show << total_pages
+                  end
+                end
+              %>
+
+              <% pages_to_show.each do |page_num| %>
+                <% if page_num == :ellipsis %>
+            <span class="px-3 py-2 text-sm font-medium text-gray-400">
+              ...
+            </span>
+                <% elsif page_num == current_page %>
+            <span class="px-3 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg">
+              <%= page_num %>
+            </span>
+                <% else %>
+                  <%= link_to page_num,
+                              transactions_path(page: page_num, search: params[:search], sort: params[:sort], category: params[:category]),
+                              class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <!-- Mobile Pagination (Max 5 items) -->
+            <div class="flex sm:hidden gap-2 mx-2">
+              <%
+                current_page = @pagy.page
+                total_pages = @pagy.pages
+
+                # Logic for mobile - max 5 items
+                if total_pages <= 3
+                  mobile_pages = (1..total_pages).to_a
+                else
+                  mobile_pages = [1]
+
+                  if current_page <= 2
+                    # Near beginning: 1 2 3 ... 15
+                    mobile_pages += [2]
+                    mobile_pages << :ellipsis
+                    mobile_pages << total_pages
+                  elsif current_page >= total_pages - 2
+                    # Near end: 1 ... 13 14 15
+                    mobile_pages << :ellipsis
+                    mobile_pages += ((total_pages - 2)..total_pages).to_a
+                  else
+                    # In middle: 1 ... 7 ... 15
+                    mobile_pages << :ellipsis
+                    mobile_pages << current_page
+                    mobile_pages << :ellipsis
+                    mobile_pages << total_pages
+                  end
+                end
+              %>
+
+              <% mobile_pages.each do |page_num| %>
+                <% if page_num == :ellipsis %>
+                  <span class="px-2 py-2 text-sm font-medium text-gray-400">
+                    ...
+                  </span>
+                <% elsif page_num == current_page %>
+                  <span class="px-3 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg">
+                    <%= page_num %>
+                  </span>
+                <% else %>
+                  <%= link_to page_num,
+                              transactions_path(page: page_num, search: params[:search], sort: params[:sort], category: params[:category]),
+                              class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @pagy.page < @pagy.pages %>
+              <%= link_to "Next",
+                          transactions_path(page: @pagy.page + 1, search: params[:search], sort: params[:sort], category: params[:category]),
+                          class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+              %>
+            <% else %>
+        <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg opacity-50 cursor-not-allowed">
+          Next
+        </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<% content_for :title, "New pot" %>
+
+<%= turbo_frame_tag "modal" do %>
+  <%= render partial: "shared/modal_header", locals: { title: "New Pot",
+                                                       description: "Create a pot to set savings targets. These can help keep you on track as you save for special purposes." } %>
+
+  <%= render "form", pot: @pot %>
+<% end %>

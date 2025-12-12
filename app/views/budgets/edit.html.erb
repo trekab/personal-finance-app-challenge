@@ -1,0 +1,8 @@
+<% content_for :title, "Editing budget" %>
+
+<%= turbo_frame_tag "modal" do %>
+  <%= render partial: "shared/modal_header", locals: { title: "Edit Budget",
+                                                       description: "As your budget changes, feel free to update your spending limits." } %>
+
+  <%= render "form", budget: @budget %>
+<% end %>

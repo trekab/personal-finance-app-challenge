@@ -1,0 +1,8 @@
+<% content_for :title, "New budget" %>
+
+<%= turbo_frame_tag "modal" do %>
+  <%= render partial: "shared/modal_header", locals: { title: "New Budget",
+                                                       description: "Choose category to set a spending budget. These categories can help you monitor spending." } %>
+
+  <%= render "form", budget: @budget %>
+<% end %>

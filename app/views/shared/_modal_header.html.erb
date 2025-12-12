@@ -1,0 +1,11 @@
+<div class="flex items-center justify-between w-full mb-3">
+  <h3 class="text-xl font-bold"><%= title %></h3>
+  <form method="dialog">
+    <button class="btn btn-circle btn-ghost relative text-lg">✕</button>
+  </form>
+</div>
+<% if description %>
+  <div class="mb-5">
+    <span class="text-sm text-gray-500"><%= description %></span>
+  </div>
+<% end %>
