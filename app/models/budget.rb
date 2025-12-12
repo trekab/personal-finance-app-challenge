@@ -4,14 +4,19 @@ class Budget < ApplicationRecord
   validates :maximum_spend, presence: true, numericality: { greater_than: 0 }
   validates :theme, :category, presence: true
 
-  THEMES = %w[Green Yellow Cyan Navy Red Purple]
+  THEMES = %w[Green Yellow Cyan Navy Red Purple Blue Turquoise Orange Pink Grey]
   COLOR_MAP = {
     "Green"  => "#2f7f6b",
     "Yellow" => "#f6e58d",
     "Cyan"   => "#7ed6df",
     "Navy"   => "#8395a7",
     "Red"    => "#e55039",
-    "Purple" => "#8e44ad"
+    "Purple" => "#8e44ad",
+    "Blue" => "#3498db",
+    "Turquoise" => "#1abc9c",
+    "Orange" => "#e67e22",
+    "Pink" => "#e74c3c",
+    "Grey" => "#bdc3c7"
   }
 
   validates :theme, uniqueness: { scope: :user_id, message: "is already used by another budget" }
