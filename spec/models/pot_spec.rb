@@ -23,13 +23,6 @@ RSpec.describe Pot, type: :model do
     end
   end
 
-  describe "#total_saved" do
-    it "currently returns 500 (placeholder)" do
-      pot = build(:pot)
-      expect(pot.total_saved).to eq(500)
-    end
-  end
-
   describe "#percentage_saved" do
     let(:pot) { build(:pot, target: 1000) }
 

@@ -10,6 +10,9 @@ application.register("auto-submit", AutoSubmitController)
 import CounterController from "./counter_controller"
 application.register("counter", CounterController)
 
+import FrequencyController from "./frequency_controller"
+application.register("frequency", FrequencyController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 

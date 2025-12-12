@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @recurring_bill %>
+
+<div>
+  <%= link_to "Edit this recurring bill", edit_recurring_bill_path(@recurring_bill) %> |
+  <%= link_to "Back to recurring bills", recurring_bills_path %>
+
+  <%= button_to "Destroy this recurring bill", @recurring_bill, method: :delete %>
+</div>

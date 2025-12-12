@@ -1,0 +1,8 @@
+<% content_for :title, "New recurring bill" %>
+
+<%= turbo_frame_tag "modal" do %>
+  <%= render partial: "shared/modal_header", locals: { title: "New Recurring Bill",
+                                                       description: "Record your recurring bills to keep track of your spending." } %>
+
+  <%= render "form", recurring_bill: @recurring_bill %>
+<% end %>

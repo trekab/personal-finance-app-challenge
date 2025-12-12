@@ -1,0 +1,12 @@
+<% content_for :title, "Editing recurring bill" %>
+
+<h1>Editing recurring bill</h1>
+
+<%= render "form", recurring_bill: @recurring_bill %>
+
+<br>
+
+<div>
+  <%= link_to "Show this recurring bill", @recurring_bill %> |
+  <%= link_to "Back to recurring bills", recurring_bills_path %>
+</div>

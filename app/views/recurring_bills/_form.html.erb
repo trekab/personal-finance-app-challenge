@@ -1,0 +1,57 @@
+<%= simple_form_for recurring_bill, html: { class: "space-y-6", data: { controller: "frequency", turbo_form: "_top" } } do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="space-y-6">
+    <%= f.input :bill_title,
+                placeholder: "e.g., Spark Electric Solutions" %>
+
+    <div class="relative">
+      <%= f.input :amount,
+                  input_html: {
+                    step: 0.01,
+                    placeholder: "e.g. 100.00",
+                    class: "pl-8"
+                  },
+                  wrapper_html: { class: "relative" } %>
+
+      <span class="absolute left-3 top-8 text-gray-500 pointer-events-none z-10">$</span>
+    </div>
+
+    <%= f.input :frequency_type,
+                collection: [['Monthly', 'Monthly'], ['Weekly', 'Weekly'], ['Yearly', 'Yearly']],
+                label: "Frequency Type",
+                prompt: "Select frequency type",
+                input_html: {
+                  data: { action: "change->frequency#toggle" }
+                } %>
+
+    <%# Monthly/Yearly - Day of Month %>
+    <div data-frequency-target="dayOfMonth" class="<%= recurring_bill.frequency_type.in?(['Monthly', 'Yearly']) ? '' : 'hidden' %>">
+      <%= f.input :day_of_month,
+                  collection: (1..31).map { |d|
+                    suffix = case d
+                             when 1, 21, 31 then "st"
+                             when 2, 22 then "nd"
+                             when 3, 23 then "rd"
+                             else "th"
+                             end
+                    ["#{d}#{suffix}", d]
+                  },
+                  label: "Day of Month",
+                  prompt: "Select day"%>
+    </div>
+
+    <%# Weekly - Day of Week %>
+    <div data-frequency-target="dayOfWeek" class="<%= recurring_bill.frequency_type == 'Weekly' ? '' : 'hidden' %>">
+      <%= f.input :day_of_week,
+                  collection: Date::DAYNAMES.reject(&:blank?),
+                  label: "Day of Week",
+                  prompt: "Select day" %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, class: "w-full" %>
+    </div>
+  </div>
+<% end %>
