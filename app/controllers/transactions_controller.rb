@@ -2,7 +2,7 @@ class TransactionsController < ApplicationController
 
   # GET /transactions or /transactions.json
   def index
-    @transactions = Transaction.all
+    @transactions = current_user.transactions
 
     # Apply search filter using scope
     @transactions = @transactions.search(params[:search]) if params[:search].present?

@@ -19,9 +19,9 @@
 
     <span class="absolute left-3 top-8 text-gray-500 pointer-events-none z-10">$</span>
   </div>
-  <% list = if @transaction.customizable_type.nil?
-              Constants::Categories::LIST
-            elsif @transaction.customizable_type == "Pot"
+  <% list = if @transaction.transaction_type == "income"
+              Constants::Categories::INCOMES
+            elsif @transaction.customizable_type && @transaction.customizable_type == "Pot"
               ["General"]
             else
               Constants::Categories::LIST

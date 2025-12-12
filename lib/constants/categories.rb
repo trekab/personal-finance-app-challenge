@@ -12,5 +12,13 @@ module Constants
       "Shopping",
       "General"
     ].freeze
+
+    INCOMES = [
+      "Salary",
+      "Bonus",
+      "Interest",
+      "Business",
+      "Side Hustle"
+    ].freeze
   end
 end
